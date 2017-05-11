@@ -1,0 +1,16 @@
+{
+    "name": "ryanvade/flysystem-box",
+    "description": "A Box.com Adapter for flysystem",
+    "require": {
+        "php": "^7.0",
+        "league/flysystem": "^1.0",
+        "ryanvade/laravel-box": "*@dev"
+    },
+    "license": "MIt",
+    "authors": [
+        {
+            "name": "Ryan Owens",
+            "email": "RyanOwens@linux.com"
+        }
+    ]
+}
