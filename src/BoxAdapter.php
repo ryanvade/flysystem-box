@@ -5,7 +5,6 @@ namespace FlysystemBox;
 use LogicException;
 use League\Flysystem\Config;
 use LaravelBox\LaravelBox as Client;
-use LaravelBox\ApiResponse;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Adapter\Polyfill\NotSupportingVisibilityTrait;
 
@@ -25,14 +24,18 @@ class BoxAdapter extends AbstractAdapter
     public function write($path, $contents, Config $config)
     {
         $path = $this->applyPathPrefix($path);
+        // TODO Preflight Check
         $resp = $this->client->uploadContents($contents, $path);
+
         return $resp; // TODO return $resp->toArray();
     }
 
     public function writeStream($path, $resource, Config $config)
     {
         $path = $this->applyPathPrefix($path);
+        // TODO Preflight Check
         $resp = $this->client->uploadStreamContents($resource, $path);
+
         return $resp; // TODO return $resp->toArray();
     }
 
@@ -42,7 +45,9 @@ class BoxAdapter extends AbstractAdapter
     public function update($path, $contents, Config $config)
     {
         $path = $this->applyPathPrefix($path);
+        // TODO Preflight Check
         $resp = $this->client->uploadContentsVersion($contents, $path);
+
         return $resp; // TODO return $resp->toArray();
     }
 
@@ -52,7 +57,9 @@ class BoxAdapter extends AbstractAdapter
     public function updateStream($path, $resource, Config $config)
     {
         $path = $this->applyPathPrefix($path);
+        // TODO Preflight Check
         $resp = $this->client->uploadStreamContentsVersion($contents, $path);
+
         return $resp; // TODO return $resp->toArray();
     }
 
@@ -64,6 +71,7 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         $newPath = $this->applyPathPrefix($newPath);
         $resp = $this->client->moveFile($path, $newPath);
+
         return $resp; // TODO return $resp->toArray();
     }
 
@@ -75,6 +83,7 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         $newPath = $this->applyPathPrefix($newPath);
         $resp = $this->client->copyFile($path, $newPath);
+
         return $resp; // TODO return $resp->toArray();
     }
 
@@ -85,6 +94,7 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->deleteFile($path);
+
         return $resp; // TODO return $resp->toArray();
     }
 
@@ -93,7 +103,6 @@ class BoxAdapter extends AbstractAdapter
      */
     public function deleteDir($dirname): bool
     {
-
     }
 
     /**
@@ -101,7 +110,6 @@ class BoxAdapter extends AbstractAdapter
      */
     public function createDir($dirname, Config $config)
     {
-
     }
 
     /**
@@ -109,7 +117,10 @@ class BoxAdapter extends AbstractAdapter
      */
     public function has($path)
     {
+        $path = $this->applyPathPrefix($path);
+        $resp = $this->client->fileInformation($path);
 
+        return $resp->getCode() < 400;
     }
 
     /**
@@ -117,7 +128,10 @@ class BoxAdapter extends AbstractAdapter
      */
     public function read($path)
     {
+        $path = $this->applyPathPrefix($path);
+        $resp = $this->client->fileStreamDownload($path);
 
+        return $resp; // TODO What is different compated to readStream?
     }
 
     /**
@@ -125,7 +139,10 @@ class BoxAdapter extends AbstractAdapter
      */
     public function readStream($path)
     {
+        $path = $this->applyPathPrefix($path);
+        $resp = $this->client->fileStreamDownload($path);
 
+        return $resp; // TODO What is different compated to readStream?
     }
 
     /**
@@ -133,7 +150,6 @@ class BoxAdapter extends AbstractAdapter
      */
     public function listContents($directory = '', $recursive = false): array
     {
-
     }
 
     /**
@@ -143,6 +159,7 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileInformation($path);
+
         return $resp; // TODO return $resp->toArray();
     }
 
@@ -153,6 +170,7 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileInformation($path);
+
         return $resp; // TODO return $resp->toArray();
     }
 
@@ -168,15 +186,17 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileEmbeddedLink($path);
+
         return $resp; // TODO return $resp->toArray();
     }
 
-    public function getThumbnail(string $path, string $format = 'jpg', string $size = 'w64h64')
+    public function getThumbnail(string $path, string $format = 'png', string $size = 'w64h64')
     {
         $path = $this->applyPathPrefix($path);
         // TODO: Return stream resource
         // TODO: Size parameter...
-        $resp = $this->client->getFileThumbnail($path, /* $outpath, */ $format);
+        $resp = $this->client->fileThumbnailStream($path, $extension);
+
         return $resp; // TODO return $resp->toArray();
     }
 
@@ -189,6 +209,4 @@ class BoxAdapter extends AbstractAdapter
 
         return '/'.trim($path, '/');
     }
-
-
 }
