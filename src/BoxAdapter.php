@@ -179,6 +179,7 @@ class BoxAdapter extends AbstractAdapter
         $arr = $resp->toArray();
         $stream = $resp->getStream();
         $arr['contents'] = $stream->getContents();
+
         return $arr;
     }
 
@@ -290,5 +291,25 @@ class BoxAdapter extends AbstractAdapter
         $path = parent::applyPathPrefix($path);
 
         return '/'.trim($path, '/');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTimestamp($path)
+    {
+        $path = parent::applyPathPrefix($path);
+
+        $resp = $this->client->fileInformation($path);
+
+        if ($resp->isError()) {
+            return false;
+        }
+
+        $arr = $resp->toArray();
+        $arr['created_at'] = $resp->getJson()->created_at;
+        $arr['modified_at'] = $resp->getJson()->modified_at;
+
+        return $arr;
     }
 }
