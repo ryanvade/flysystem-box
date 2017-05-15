@@ -176,7 +176,10 @@ class BoxAdapter extends AbstractAdapter
             return false;
         }
 
-        return $resp->toArray(); // TODO What is different compated to readStream?
+        $arr = $resp->toArray();
+        $stream = $resp->getStream();
+        $arr['contents'] = $stream->getContents();
+        return $arr;
     }
 
     /**
@@ -190,7 +193,7 @@ class BoxAdapter extends AbstractAdapter
             return false;
         }
 
-        return $resp->toArray(); // TODO What is different compated to readStream?
+        return $resp->toArray();
     }
 
     /**
