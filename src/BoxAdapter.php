@@ -101,8 +101,12 @@ class BoxAdapter extends AbstractAdapter
     /**
      * {@inheritdoc}
      */
-    public function deleteDir($dirname): bool
+    public function deleteDir($dirname)
     {
+        $path = $this->applyPathPrefix($dirname);
+        $resp = $this->client->deleteFolder($path, true); // Going to assume recursive
+
+        return $resp; // TODO return $resp->toArray()
     }
 
     /**
@@ -110,6 +114,10 @@ class BoxAdapter extends AbstractAdapter
      */
     public function createDir($dirname, Config $config)
     {
+        $path = $this->applyPathPrefix($dirname);
+        $resp = $this->client->createFolder($path);
+
+        return $resp; // TODO return $resp->toArray()
     }
 
     /**
@@ -150,6 +158,19 @@ class BoxAdapter extends AbstractAdapter
      */
     public function listContents($directory = '', $recursive = false): array
     {
+        $path = $this->applyPathPrefix($path);
+        $count = $this->client->getFolderItemsCount($path);
+        $offset = 0;
+        $limit = 1000;
+        $items = array();
+        do {
+            $resp = $this->client->getFolderItems($path, $offset, $limit);
+            if($resp->isError()) return false;
+            array_push($items, $resp->getJson()->entries);
+            $offset = $offset + $limit;
+            $limit = ($count - $offset < 1000) ? $count - $offset: 1000;
+        }while($offset != $count);
+        return $items;
     }
 
     /**
