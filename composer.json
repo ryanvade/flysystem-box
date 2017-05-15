@@ -12,5 +12,10 @@
             "name": "Ryan Owens",
             "email": "RyanOwens@linux.com"
         }
-    ]
+    ],
+    "autoload": {
+      "psr-4": {
+        "FlysystemBox\\": "src/"
+      }
+    }
 }
