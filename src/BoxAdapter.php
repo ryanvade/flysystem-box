@@ -27,7 +27,10 @@ class BoxAdapter extends AbstractAdapter
         // TODO Preflight Check
         $resp = $this->client->uploadContents($contents, $path);
 
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $resp->toArray();
     }
 
@@ -36,7 +39,10 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         // TODO Preflight Check
         $resp = $this->client->uploadStreamContents($resource, $path);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $resp->toArray();
     }
 
@@ -48,7 +54,10 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         // TODO Preflight Check
         $resp = $this->client->uploadContentsVersion($contents, $path);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $resp->toArray();
     }
 
@@ -60,7 +69,10 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         // TODO Preflight Check
         $resp = $this->client->uploadStreamContentsVersion($contents, $path);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $resp->toArray();
     }
 
@@ -72,7 +84,10 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         $newPath = $this->applyPathPrefix($newPath);
         $resp = $this->client->moveFile($path, $newPath);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $true;
     }
 
@@ -84,7 +99,10 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         $newPath = $this->applyPathPrefix($newPath);
         $resp = $this->client->copyFile($path, $newPath);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return true;
     }
 
@@ -106,7 +124,10 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($dirname);
         $resp = $this->client->deleteFolder($path, true); // Going to assume recursive
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $true;
     }
 
@@ -117,7 +138,10 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($dirname);
         $resp = $this->client->createFolder($path);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $resp->toArray();
     }
 
@@ -128,7 +152,10 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileInformation($path);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $resp->toArray();
     }
 
@@ -139,7 +166,10 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileStreamDownload($path);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $resp->toArray(); // TODO What is different compated to readStream?
     }
 
@@ -150,7 +180,10 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileStreamDownload($path);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $resp->toArray(); // TODO What is different compated to readStream?
     }
 
@@ -166,11 +199,14 @@ class BoxAdapter extends AbstractAdapter
         $items = array();
         do {
             $resp = $this->client->getFolderItems($path, $offset, $limit);
-            if($resp->isError()) return false;
+            if ($resp->isError()) {
+                return false;
+            }
             array_push($items, $resp->getJson()->entries);
             $offset = $offset + $limit;
-            $limit = ($count - $offset < 1000) ? $count - $offset: 1000;
-        }while($offset != $count && $count > 0);
+            $limit = ($count - $offset < 1000) ? $count - $offset : 1000;
+        } while ($offset != $count && $count > 0);
+
         return $items;
     }
 
@@ -181,7 +217,10 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileInformation($path);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $resp->toArray();
     }
 
@@ -192,7 +231,10 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileInformation($path);
-        if($resp->isError()) return false;
+        if ($resp->isError()) {
+            return false;
+        }
+
         return $resp->toArray();
     }
 
