@@ -6,7 +6,7 @@
         "league/flysystem": "^1.0",
         "ryanvade/laravel-box": "*@dev"
     },
-    "license": "MIt",
+    "license": "Mit",
     "authors": [
         {
             "name": "Ryan Owens",

@@ -21,6 +21,9 @@ class BoxAdapter extends AbstractAdapter
         $this->setPathPrefix($prefix);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function write($path, $contents, Config $config)
     {
         $path = $this->applyPathPrefix($path);
@@ -34,6 +37,9 @@ class BoxAdapter extends AbstractAdapter
         return $resp->toArray();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function writeStream($path, $resource, Config $config)
     {
         $path = $this->applyPathPrefix($path);
@@ -88,7 +94,7 @@ class BoxAdapter extends AbstractAdapter
             return false;
         }
 
-        return $true;
+        return true;
     }
 
     /**
@@ -128,7 +134,7 @@ class BoxAdapter extends AbstractAdapter
             return false;
         }
 
-        return $true;
+        return true;
     }
 
     /**
@@ -194,6 +200,9 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $count = $this->client->getFolderItemsCount($path);
+        if ($count < 0) {
+            return false;
+        }
         $offset = 0;
         $limit = 1000;
         $items = array();
@@ -246,6 +255,9 @@ class BoxAdapter extends AbstractAdapter
         throw new LogicException("Box Api does not support MimeTypes for path ${path}");
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTemporaryLink(string $path)
     {
         $path = $this->applyPathPrefix($path);
@@ -254,6 +266,9 @@ class BoxAdapter extends AbstractAdapter
         return $resp->toArray();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getThumbnail(string $path, string $format = 'png', string $size = 'w64h64')
     {
         $path = $this->applyPathPrefix($path);
