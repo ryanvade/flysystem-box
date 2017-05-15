@@ -27,7 +27,8 @@ class BoxAdapter extends AbstractAdapter
         // TODO Preflight Check
         $resp = $this->client->uploadContents($contents, $path);
 
-        return $resp; // TODO return $resp->toArray();
+        if($resp->isError()) return false;
+        return $resp->toArray();
     }
 
     public function writeStream($path, $resource, Config $config)
@@ -35,8 +36,8 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         // TODO Preflight Check
         $resp = $this->client->uploadStreamContents($resource, $path);
-
-        return $resp; // TODO return $resp->toArray();
+        if($resp->isError()) return false;
+        return $resp->toArray();
     }
 
     /**
@@ -47,8 +48,8 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         // TODO Preflight Check
         $resp = $this->client->uploadContentsVersion($contents, $path);
-
-        return $resp; // TODO return $resp->toArray();
+        if($resp->isError()) return false;
+        return $resp->toArray();
     }
 
     /**
@@ -59,8 +60,8 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         // TODO Preflight Check
         $resp = $this->client->uploadStreamContentsVersion($contents, $path);
-
-        return $resp; // TODO return $resp->toArray();
+        if($resp->isError()) return false;
+        return $resp->toArray();
     }
 
     /**
@@ -71,8 +72,8 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         $newPath = $this->applyPathPrefix($newPath);
         $resp = $this->client->moveFile($path, $newPath);
-
-        return $resp; // TODO return $resp->toArray();
+        if($resp->isError()) return false;
+        return $true;
     }
 
     /**
@@ -83,8 +84,8 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         $newPath = $this->applyPathPrefix($newPath);
         $resp = $this->client->copyFile($path, $newPath);
-
-        return $resp; // TODO return $resp->toArray();
+        if($resp->isError()) return false;
+        return true;
     }
 
     /**
@@ -95,7 +96,7 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->deleteFile($path);
 
-        return $resp; // TODO return $resp->toArray();
+        return $resp->toArray();
     }
 
     /**
@@ -105,8 +106,8 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($dirname);
         $resp = $this->client->deleteFolder($path, true); // Going to assume recursive
-
-        return $resp; // TODO return $resp->toArray()
+        if($resp->isError()) return false;
+        return $true;
     }
 
     /**
@@ -116,8 +117,8 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($dirname);
         $resp = $this->client->createFolder($path);
-
-        return $resp; // TODO return $resp->toArray()
+        if($resp->isError()) return false;
+        return $resp->toArray();
     }
 
     /**
@@ -127,8 +128,8 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileInformation($path);
-
-        return $resp->getCode() < 400;
+        if($resp->isError()) return false;
+        return $resp->toArray();
     }
 
     /**
@@ -138,8 +139,8 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileStreamDownload($path);
-
-        return $resp; // TODO What is different compated to readStream?
+        if($resp->isError()) return false;
+        return $resp->toArray(); // TODO What is different compated to readStream?
     }
 
     /**
@@ -149,8 +150,8 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileStreamDownload($path);
-
-        return $resp; // TODO What is different compated to readStream?
+        if($resp->isError()) return false;
+        return $resp->toArray(); // TODO What is different compated to readStream?
     }
 
     /**
@@ -169,7 +170,7 @@ class BoxAdapter extends AbstractAdapter
             array_push($items, $resp->getJson()->entries);
             $offset = $offset + $limit;
             $limit = ($count - $offset < 1000) ? $count - $offset: 1000;
-        }while($offset != $count);
+        }while($offset != $count && $count > 0);
         return $items;
     }
 
@@ -180,8 +181,8 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileInformation($path);
-
-        return $resp; // TODO return $resp->toArray();
+        if($resp->isError()) return false;
+        return $resp->toArray();
     }
 
     /**
@@ -191,8 +192,8 @@ class BoxAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileInformation($path);
-
-        return $resp; // TODO return $resp->toArray();
+        if($resp->isError()) return false;
+        return $resp->toArray();
     }
 
     /**
@@ -208,7 +209,7 @@ class BoxAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         $resp = $this->client->fileEmbeddedLink($path);
 
-        return $resp; // TODO return $resp->toArray();
+        return $resp->toArray();
     }
 
     public function getThumbnail(string $path, string $format = 'png', string $size = 'w64h64')
@@ -218,7 +219,7 @@ class BoxAdapter extends AbstractAdapter
         // TODO: Size parameter...
         $resp = $this->client->fileThumbnailStream($path, $extension);
 
-        return $resp; // TODO return $resp->toArray();
+        return $resp->toArray();
     }
 
     /**
