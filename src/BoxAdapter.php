@@ -202,7 +202,7 @@ class BoxAdapter extends AbstractAdapter
      */
     public function listContents($directory = '', $recursive = false): array
     {
-        $path = $this->applyPathPrefix($path);
+        $path = $this->applyPathPrefix($directory);
         $count = $this->client->getFolderItemsCount($path);
         if ($count < 0) {
             return false;
@@ -212,15 +212,31 @@ class BoxAdapter extends AbstractAdapter
         $items = array();
         do {
             $resp = $this->client->getFolderItems($path, $offset, $limit);
+
             if ($resp->isError()) {
                 return false;
             }
-            array_push($items, $resp->getJson()->entries);
+
+            foreach($resp->getJson()->entries as $entry) {
+                $items[] = array(
+                    "type" => $entry->type,
+                    "id" => $entry->id,
+                    "etag" => 0,
+                    "modified_at" => $entry->modified_at,         
+                    "name" => $entry->name,
+                    "size" => $entry->size,
+                );
+            }           
+
             $offset = $offset + $limit;
             $limit = ($count - $offset < 1000) ? $count - $offset : 1000;
         } while ($offset != $count && $count > 0);
 
-        return $items;
+        return array_map(function ($entry) {
+            $path = $this->removePathPrefix($entry['name']);
+
+            return $this->normalizeResponse($entry, $path);
+        }, $items);
     }
 
     /**
@@ -311,5 +327,25 @@ class BoxAdapter extends AbstractAdapter
         $arr['modified_at'] = $resp->getJson()->modified_at;
 
         return $arr;
+    }
+
+    protected function normalizeResponse(array $response): array
+    {
+        $normalizedPath = ltrim($this->removePathPrefix($response['name']), '/');
+
+        $normalizedResponse = ['path' => $normalizedPath];
+
+        if (isset($response['modified_at'])) {
+            $normalizedResponse['timestamp'] = strtotime($response['modified_at']);
+        }
+
+        if (isset($response['size'])) {
+            $normalizedResponse['size'] = $response['size'];
+        }
+
+        $type = ($response['type'] === 'folder' ? 'dir' : 'file');
+        $normalizedResponse['type'] = $type;
+
+        return $normalizedResponse;
     }
 }
