@@ -211,7 +211,7 @@ class BoxAdapter extends AbstractAdapter
         $limit = 1000;
         $items = array();
         do {
-            $resp = $this->client->getFolderItems($path, $offset, $limit);
+            $resp = $this->client->getFolderItems($path, [], $offset, $limit);
 
             if ($resp->isError()) {
                 return false;
